@@ -30,7 +30,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
                 case 4: // Opener contact
                     return _sensor.Status == "{WEB_MSG_DC_OPEN}" ? "ON" : "OFF";
                 case 9: // Motion detector
-                    var matchingEvent = _logRows.Where(r => r.Event.StartsWith("{ALARM_HISTORY_20}"))
+                    var matchingEvent = _logRows.Where(r => r.Event?.StartsWith("{ALARM_HISTORY_20}")??false)
                         .OrderByDescending(r => r.UtcDateTime)
                         .FirstOrDefault(r => (DateTime.UtcNow - r.UtcDateTime) <= TimeSpan.FromSeconds(_configuration.GetValue<int>("MotionSensor:DetectionDuration")));
                     return matchingEvent != null ? "ON" : "OFF";
