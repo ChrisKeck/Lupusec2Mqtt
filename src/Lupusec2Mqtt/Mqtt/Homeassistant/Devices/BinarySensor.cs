@@ -28,6 +28,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
             switch (_sensor.TypeId)
             {
                 case 4: // Opener contact
+                case 33: // Opener contact XT2
                     return _sensor.Status == "{WEB_MSG_DC_OPEN}" ? "ON" : "OFF";
                 case 9: // Motion detector
                     var matchingEvent = _logRows.Where(r => r.Event.StartsWith("{ALARM_HISTORY_20}"))
@@ -48,7 +49,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
         : base(configuration)
         {
             _sensor = sensor;
-            _logRows = logRows;
+            _logRows = logRows??new List<LogRow>();
 
             UniqueId = _sensor.SensorId;
             Name = GetValue(nameof(Name), sensor.Name);
@@ -59,7 +60,9 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
         {
             switch (_sensor.TypeId)
             {
+
                 case 4:
+                case 33: // Opener contact XT2:
                     return "window";
                 case 9:
                     return "motion";
