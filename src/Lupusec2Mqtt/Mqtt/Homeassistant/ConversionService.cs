@@ -10,10 +10,12 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant
     public class ConversionService
     {
         private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
 
-        public ConversionService(IConfiguration configuration)
+        public ConversionService(IConfiguration configuration, ILogger logger)
         {
             _configuration = configuration;
+            _logger = logger
         }
 
         public IEnumerable<IDevice> GetDevices(Sensor sensor)
@@ -77,6 +79,9 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant
                     list.Add(new TemperatureSensor(_configuration, sensor, logRows));
                     list.Add(new HumiditySensor(_configuration, sensor, logRows));
                     break;
+                default:
+                     _logger.LogInformation("Sensor of Type {type} with name {name} is ignored.", sensor.Type,
+                                sensor.Name);
             }
 
             return list;
@@ -89,12 +94,16 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant
                 case 24: // Wall switch
                     return (Device: new Switch(_configuration, powerSwitch), SwitchPowerSensor: null);
                 case 48: // Power meter switch
-                    return (Device: new Switch(_configuration, powerSwitch), SwitchPowerSensor: new SwitchPowerSensor(_configuration, powerSwitch));
+                    return (Device: new Switch(_configuration, powerSwitch),
+                            SwitchPowerSensor: new SwitchPowerSensor(_configuration, powerSwitch));
                 case 74: // Light switch
                     return (Device: new Light(_configuration, powerSwitch), SwitchPowerSensor: null);
                 case 57: // Smart Lock
                     return (Device: new Lock(_configuration, powerSwitch), SwitchPowerSensor: null);
                 default:
+                     _logger.LogInformation("Device of Type {typeId} with name {name} is ignored.",
+                                            powerSwitch.Type,
+                                            powerSwitch.Name);
                     return null;
             }
 
