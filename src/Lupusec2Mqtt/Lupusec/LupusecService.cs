@@ -25,28 +25,28 @@ namespace Lupusec2Mqtt.Lupusec
 
         public async Task<SensorList> GetSensorsAsync()
         {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "/action/deviceListGet");
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "/action/deviceListGet");
             SensorList responseBody = await SendRequest<SensorList>(request);
             return responseBody;
         }
 
         public async Task<RecordList> GetRecordsAsync()
         {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "/action/recordListGet");
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "/action/recordListGet");
             RecordList responseBody = await SendRequest<RecordList>(request);
             return responseBody;
         }
 
         public async Task<PowerSwitchList> GetPowerSwitches()
         {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "/action/deviceListPSSGet");
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "/action/deviceListPSSGet");
             PowerSwitchList responseBody = await SendRequest<PowerSwitchList>(request);
             return responseBody;
         }
 
         public async Task<PanelCondition> GetPanelConditionAsync()
         {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "/action/panelCondGet");
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "/action/panelCondGet");
             PanelCondition responseBody = await SendRequest<PanelCondition>(request);
             return responseBody;
         }
@@ -92,9 +92,9 @@ namespace Lupusec2Mqtt.Lupusec
                 _logger.LogInformation("This was the Answer for requesting {uri}:\n{body}", request.RequestUri, responseBody);
                 return responseBody;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Call to Lupusec has an error! Request was:\n{request}", request);
+                _logger.LogError("Call to Lupusec has an error! Request was:\n{request}", request.RequestUri.ToString());
             }
             return default(T);
         }
