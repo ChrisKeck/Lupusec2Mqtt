@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 {
-    public class SwitchPowerSensor : Device, IDevice, IStateProvider
+    public class SwitchPowerSensor : Device, IStateProvider
     {
         protected readonly PowerSwitch _powerSwitch;
 
@@ -32,7 +32,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
             if (match.Success) { return match.Groups["power"].Value; }
             return "0";
         }
-   
+
         public SwitchPowerSensor(IConfiguration configuration, PowerSwitch powerSwitch)
        : base(configuration)
         {
@@ -41,5 +41,6 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
             UniqueId = $"{_powerSwitch.Id}_power";
             Name = GetValue(nameof(Name), $"{_powerSwitch.Name} - Power");
         }
+
     }
 }

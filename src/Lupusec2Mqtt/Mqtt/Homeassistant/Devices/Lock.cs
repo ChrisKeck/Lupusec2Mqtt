@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Lupusec2Mqtt.Lupusec;
 using Lupusec2Mqtt.Lupusec.Dtos;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 {
-    public class Lock : Device, IDevice, IStateProvider, ISettable
+    public class Lock : Device, ISettable
     {
         protected readonly PowerSwitch _powerSwitch;
 

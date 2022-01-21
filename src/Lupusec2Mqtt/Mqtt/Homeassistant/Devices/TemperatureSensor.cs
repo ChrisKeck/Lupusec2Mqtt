@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -8,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 {
-    public class TemperatureSensor : Device, IDevice, IStateProvider
+    public class TemperatureSensor : Device, IStateProvider
     {
         protected readonly Sensor _sensor;
         protected readonly IList<Logrow> _logRows;
@@ -39,7 +40,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
         : base(configuration)
         {
             _sensor = sensor;
-            _logRows = logRows??new Logrow[0];
+            _logRows = logRows??new List<Logrow>();
 
             UniqueId = _sensor.SensorId + "TEMPERATURE";
             Name = GetValue(nameof(Name), sensor.Name + " - Temperature");
@@ -50,5 +51,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
         {
             return "temperature";
         }
+
+
     }
 }

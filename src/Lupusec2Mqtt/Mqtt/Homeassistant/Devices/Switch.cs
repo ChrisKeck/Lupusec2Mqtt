@@ -1,15 +1,12 @@
-﻿using Lupusec2Mqtt.Lupusec;
+﻿using System;
+using Lupusec2Mqtt.Lupusec;
 using Lupusec2Mqtt.Lupusec.Dtos;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 {
-    public class Switch : Device, IDevice, IStateProvider, ISettable
+    public class Switch : Device, ISettable
     {
         protected readonly PowerSwitch _powerSwitch;
 
@@ -26,7 +23,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 
         private string GetState()
         {
-            if (_powerSwitch.Status.Contains("{WEB_MSG_PSS_ON}")) { return "ON"; } 
+            if (_powerSwitch.Status.Contains("{WEB_MSG_PSS_ON}")) { return "ON"; }
             else { return "OFF"; }
         }
 
@@ -36,7 +33,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
         }
 
         public Switch(IConfiguration configuration, PowerSwitch powerSwitch)
-        : base(configuration)
+            : base(configuration)
         {
             _powerSwitch = powerSwitch;
 

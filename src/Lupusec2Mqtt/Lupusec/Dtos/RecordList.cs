@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Lupusec2Mqtt.Lupusec.Dtos
 {
@@ -10,9 +9,14 @@ namespace Lupusec2Mqtt.Lupusec.Dtos
     {
         [JsonPropertyName("logrows")]
         public List<Logrow> Logrows { get; set; }
+
+        public override string ToString()
+        {
+            return $"[\n{string.Join(",\n", Logrows.Select(item => item.ToString()))}\n]";
+        }
     }
 
-    public class Logrow
+    public class Logrow:JsonRespresentable
     {
         [JsonPropertyName("uid")]
         public int Uid { get; set; }
@@ -56,7 +60,8 @@ namespace Lupusec2Mqtt.Lupusec.Dtos
 
         [JsonPropertyName("mark_read")]
         public int MarkRead { get; set; }
+
     }
 
- 
+
 }

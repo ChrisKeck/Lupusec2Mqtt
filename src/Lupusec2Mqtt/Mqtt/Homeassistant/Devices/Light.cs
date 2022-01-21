@@ -1,15 +1,12 @@
-﻿using Lupusec2Mqtt.Lupusec;
+﻿using System;
+using Lupusec2Mqtt.Lupusec;
 using Lupusec2Mqtt.Lupusec.Dtos;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 {
-    public class Light : Device, IDevice, IStateProvider, ISettable
+    public class Light : Device, ISettable
     {
         protected readonly PowerSwitch _powerSwitch;
 
@@ -36,7 +33,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 
 
         public Light(IConfiguration configuration, PowerSwitch powerSwitch)
-        : base(configuration)
+            : base(configuration)
         {
             _powerSwitch = powerSwitch;
 

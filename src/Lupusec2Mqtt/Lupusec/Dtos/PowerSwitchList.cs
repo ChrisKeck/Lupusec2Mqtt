@@ -1,15 +1,17 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Lupusec2Mqtt.Lupusec.Dtos
 {
     public class PowerSwitchList
     {
         [JsonProperty("pssrows")]
-        public PowerSwitch[] PowerSwitches { get; set; }
+        public IList<PowerSwitch> PowerSwitches { get; set; }
+
+        public override string ToString()
+        {
+            return $"[\n{string.Join(",\n", PowerSwitches.Select(item => item.ToString()))}\n]";
+        }
     }
 }

@@ -6,7 +6,5 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
         string UniqueId { get; }
 
         string ConfigTopic { get; }
-
-
     }
 }

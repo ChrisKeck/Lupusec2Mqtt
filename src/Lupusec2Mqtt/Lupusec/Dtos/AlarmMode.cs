@@ -10,7 +10,7 @@ namespace Lupusec2Mqtt.Lupusec.Dtos
 
     }
 
-        public enum AlarmModeAction : byte
+    public enum AlarmModeAction : byte
     {
         DISARM = 0,
         ARM_AWAY = 1,

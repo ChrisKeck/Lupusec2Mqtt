@@ -1,4 +1,3 @@
-using Lupusec2Mqtt.Lupusec.Dtos;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
@@ -35,5 +34,11 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
         {
             return topic.Replace(":", "_");
         }
+
+        public override string ToString()
+        {
+            return $"{JsonConvert.SerializeObject(this)}";
+        }
+
     }
 }

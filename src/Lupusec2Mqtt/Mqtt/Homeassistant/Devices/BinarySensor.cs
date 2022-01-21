@@ -1,15 +1,17 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Lupusec2Mqtt.Lupusec.Dtos;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-
+using Lupusec2Mqtt.Mqtt.Homeassistant;
 namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 {
-    public class BinarySensor : Device, IDevice, IStateProvider
+    public class BinarySensor : Device, IStateProvider
     {
         protected readonly Sensor _sensor;
+        private readonly IConversionService _conversationService;
         protected readonly IList<Logrow> _logRows;
 
         [JsonProperty("device_class")]
@@ -25,31 +27,15 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 
         private string GetState()
         {
-            switch (_sensor.TypeId)
-            {
-                case 4: // Opener contact
-                case 33: // Opener contact XT2
-                    return _sensor.Status == "{WEB_MSG_DC_OPEN}" ? "ON" : "OFF";
-                case 9: // Motion detector
-                    var matchingEvent = _logRows.Where(r => r.Event.StartsWith("{ALARM_HISTORY_20}")|| r.Event.StartsWith("{ALARM_HISTORY_183}"))
-                        .OrderByDescending(r => r.UtcDateTime)
-                        .FirstOrDefault(r => (DateTime.UtcNow - r.UtcDateTime) <= TimeSpan.FromSeconds(_configuration.GetValue<int>("MotionSensor:DetectionDuration")));
-
-                    return matchingEvent != null ? "ON" : "OFF";
-                case 11: // Smoke detector
-                    return _sensor.Status == "{RPT_CID_111}" ? "ON" : "OFF";
-                case 5: // Water detector
-                    return "OFF";
-                default:
-                    return null;
-            }
+            return _conversationService.GetStateByStatus(_sensor, _logRows);
         }
 
-        public BinarySensor(IConfiguration configuration, Sensor sensor, IList<Logrow> logRows = default)
-        : base(configuration)
+        public BinarySensor(IConfiguration configuration, Sensor sensor, IConversionService service, IList<Logrow> logRows = default)
+            : base(configuration)
         {
+            _conversationService = service;
             _sensor = sensor;
-            _logRows = logRows??new Logrow[0];
+            _logRows = logRows ?? new List<Logrow>();
 
             UniqueId = _sensor.SensorId;
             Name = GetValue(nameof(Name), sensor.Name);
@@ -58,21 +44,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 
         private string GetDeviceClassDefaultValue()
         {
-            switch (_sensor.TypeId)
-            {
-
-                case 4: // Opener contact
-                case 33: // Opener contact XT2:
-                    return "window";
-                case 9:
-                    return "motion";
-                case 11:
-                    return "smoke";
-                case 5:
-                    return "moisture";
-                default:
-                    return null;
-            }
+            return _conversationService.GetDeviceClassDefaultValue(_sensor);
         }
     }
 }

@@ -15,7 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Polly;
 using Serilog.Core;
 using Serilog;
-
+using  Lupusec2Mqtt.Homeassistant;
 namespace Lupusec2Mqtt
 {
     public class Startup
@@ -33,14 +33,13 @@ namespace Lupusec2Mqtt
 
             services.AddHttpClient<LupusecTokenHandler>(client =>
             {
-                client.BaseAddress = new Uri(Configuration["Lupusec:Url"]);
+                client.BaseAddress = new Uri(Configuration.GetLupusecUrl());
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
-                Convert.ToBase64String(Encoding.ASCII.GetBytes($"{Configuration["Lupusec:Login"]}:{Configuration["Lupusec:Password"]}")));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",Configuration.GetBasicAuth());
             })
             .ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler() { ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator })
-            .AddTransientHttpErrorPolicy(c => 
+            .AddTransientHttpErrorPolicy(c =>
             {
                 return c.WaitAndRetryAsync(new[]
                 {
@@ -53,11 +52,11 @@ namespace Lupusec2Mqtt
 
             services.AddHttpClient<ILupusecService, LupusecService>(client =>
             {
-                client.BaseAddress = new Uri(Configuration["Lupusec:Url"]);
+                client.BaseAddress = new Uri(Configuration.GetLupusecUrl());
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
-                Convert.ToBase64String(Encoding.ASCII.GetBytes($"{Configuration["Lupusec:Login"]}:{Configuration["Lupusec:Password"]}")));
+                Configuration.GetBasicAuth());
             })
             .ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler() { ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator })
             .AddHttpMessageHandler<LupusecTokenHandler>();

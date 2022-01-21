@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Lupusec2Mqtt.Lupusec.Dtos;
@@ -14,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using uPLibrary.Networking.M2Mqtt;
 
 namespace Lupusec2Mqtt.Lupusec
 {
@@ -60,13 +57,14 @@ namespace Lupusec2Mqtt.Lupusec
 
             foreach (var sensor in response.Sensors)
             {
-               TryCall(sensor, ConfigureSensors);
+                TryCall(sensor, ConfigureSensors);
             }
 
             AlarmBinarySensor alarmBinarySensorArea1 = new AlarmBinarySensor(_configuration, 1);
             AlarmBinarySensor alarmBinarySensorArea2 = new AlarmBinarySensor(_configuration, 2);
 
-            PublishDeviceToMqtt(alarmBinarySensorArea1);PublishDeviceToMqtt(alarmBinarySensorArea2);
+            PublishDeviceToMqtt(alarmBinarySensorArea1);
+            PublishDeviceToMqtt(alarmBinarySensorArea2);
         }
 
         private void ConfigureSensors(Sensor sensor)
@@ -74,7 +72,7 @@ namespace Lupusec2Mqtt.Lupusec
             IEnumerable<IDevice> configs = _conversionService.GetDevices(sensor);
             foreach (var config in configs)
             {
-               TryCall(config, PublishDeviceToMqtt);
+                TryCall(config, PublishDeviceToMqtt);
             }
         }
 
@@ -84,7 +82,7 @@ namespace Lupusec2Mqtt.Lupusec
 
             foreach (var powerSwitch in response.PowerSwitches)
             {
-                TryCall(powerSwitch,ConfigurePowerSwitch);
+                TryCall(powerSwitch, ConfigurePowerSwitch);
             }
         }
 
@@ -109,7 +107,8 @@ namespace Lupusec2Mqtt.Lupusec
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occured while setting switch {UniqueId} {Name} to {Status}", device.UniqueId, device.Name, state);
+                _logger.LogError(ex, "An error occured while setting switch {UniqueId} {Name} to {Status}",
+                                 device.UniqueId, device.Name, state);
             }
         }
 
@@ -117,7 +116,7 @@ namespace Lupusec2Mqtt.Lupusec
         {
             if (device != null)
             {
-                TryCall(device,
+                TryCall(device, 
                         item=> _mqttService.Publish(item.ConfigTopic, JsonConvert.SerializeObject(item)));
             }
         }
@@ -161,11 +160,11 @@ namespace Lupusec2Mqtt.Lupusec
         private async Task PublishPowerSwitches()
         {
             PowerSwitchList powerSwitchList = await _lupusecService.GetPowerSwitches();
-            _logger.LogDebug("Received {countPowerSwitches} power switches", powerSwitchList.PowerSwitches.Length);
+            _logger.LogDebug("Received {countPowerSwitches} power switches", powerSwitchList.PowerSwitches.Count);
 
             foreach (var powerSwitch in powerSwitchList.PowerSwitches)
             {
-                TryCall(powerSwitch,PublishPowerSwitch);
+                TryCall(powerSwitch, PublishPowerSwitch);
             }
         }
 
@@ -183,7 +182,7 @@ namespace Lupusec2Mqtt.Lupusec
         {
             if (provider != null)
             {
-                TryCall(provider,item=> _mqttService.Publish(item.StateTopic, item.State));
+                TryCall(provider, item => _mqttService.Publish(item.StateTopic, item.State));
             }
         }
 
@@ -197,7 +196,7 @@ namespace Lupusec2Mqtt.Lupusec
 
             foreach (var sensor in sensorList.Sensors)
             {
-                TryCall( sensor, item=> PublishSensor(recordList, item));
+                TryCall(sensor, item => PublishSensor(recordList, item));
             }
 
             AlarmBinarySensor alarmBinarySensorArea1 = new AlarmBinarySensor(_configuration, 1);
@@ -212,13 +211,13 @@ namespace Lupusec2Mqtt.Lupusec
         private void PublishSensor(RecordList recordList, Sensor sensor)
         {
             _logger.LogDebug("Handling sensor of type {sensorType}", sensor.TypeId);
-            IList<Logrow> sensorLogRows=recordList.Logrows.Where(r => r.Sid.Equals(sensor.SensorId)).ToArray();
+            IList<Logrow> sensorLogRows = recordList.Logrows.Where(r => r.Sid.Equals(sensor.SensorId)).ToArray();
             IList<IStateProvider> devices = _conversionService.GetStateProviders(sensor, sensorLogRows);
 
             _logger.LogDebug("Received {countDevices} devices", devices.Count);
             foreach (var device in devices)
             {
-                TryCall(device,PublishStateToMqtt);
+                TryCall(device, PublishStateToMqtt);
             }
         }
 
@@ -226,7 +225,8 @@ namespace Lupusec2Mqtt.Lupusec
         {
             PanelCondition panelCondition = await _lupusecService.GetPanelConditionAsync();
             var panelConditions = _conversionService.GetDevice(panelCondition);
-            _logger.LogDebug("Received alarm panel information (Area 1: {area1}, Area 2: {area2})", panelConditions.Area1.State, panelConditions.Area2.State);
+            _logger.LogDebug("Received alarm panel information (Area 1: {area1}, Area 2: {area2})",
+                             panelConditions.Area1.State, panelConditions.Area2.State);
 
             PublishStateToMqtt(panelConditions.Area1);
             PublishStateToMqtt(panelConditions.Area2);
