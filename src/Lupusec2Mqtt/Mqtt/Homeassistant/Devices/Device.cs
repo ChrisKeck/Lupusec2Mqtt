@@ -5,8 +5,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 {
     public abstract class Device : IDevice
     {
-
-        protected readonly IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
         [JsonProperty("name")]
         public string Name { get; protected set; }
@@ -19,6 +18,11 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
         [JsonIgnore]
         public virtual string ConfigTopic => EscapeTopic($"homeassistant/{_component}/lupusec/{UniqueId}/config");
 
+        protected IConfiguration Configuration
+        {
+            get => _configuration;
+        }
+
         public Device(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -27,7 +31,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 
         protected string GetValue(string property, string defaultValue)
         {
-            return _configuration[$"Mappings:{UniqueId}:{property}"] ?? defaultValue;
+            return Configuration[$"Mappings:{UniqueId}:{property}"] ?? defaultValue;
         }
 
         protected string EscapeTopic(string topic)

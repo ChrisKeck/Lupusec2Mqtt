@@ -12,6 +12,7 @@ namespace Lupusec2Mqtt.Lupusec.Dtos
         public override string ToString()
         {
             return $"[\n{string.Join(",\n", Sensors.Select(item => item.ToString()))}\n]";
+
         }
     }
 }

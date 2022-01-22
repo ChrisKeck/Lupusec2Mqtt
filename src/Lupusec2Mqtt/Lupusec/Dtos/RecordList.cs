@@ -1,22 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json.Serialization;
+using Lupusec2Mqtt.Lupusec.Dtos;
+using Newtonsoft.Json;
 
 namespace Lupusec2Mqtt.Lupusec.Dtos
 {
     public class RecordList
     {
         [JsonPropertyName("logrows")]
-        public List<Logrow> Logrows { get; set; }
+        public List<Logrow> Logrows { get; set; } = new List<Logrow>();
 
         public override string ToString()
         {
-            return $"[\n{string.Join(",\n", Logrows.Select(item => item.ToString()))}\n]";
+            return $"[\n{string.Join(",\n", Logrows.Select<ILupusActor, string>(item => $"{{\n\"name\":\"{item.Name}\",\n\"type\":\"{item.TypeId}\",\n\"status\":\"{item.Status}\"\n}}"))}\n]";
         }
     }
 
-    public class Logrow:JsonRespresentable
+    public class Logrow : ILupusActor
     {
         [JsonPropertyName("uid")]
         public int Uid { get; set; }
@@ -60,7 +63,27 @@ namespace Lupusec2Mqtt.Lupusec.Dtos
 
         [JsonPropertyName("mark_read")]
         public int MarkRead { get; set; }
+        string ILupusActor.Id
+        {
+            get => this.Sid;
+        }
+        int ILupusActor.TypeId
+        {
+            get
+            {
+                int output;
+                return int.TryParse(Type, out output)?output:-1;
+            }
+        }
+        string ILupusActor.Status
+        {
+            get => Event;
+        }
 
+        public override string ToString()
+        {
+            return $"{{\n\"name\":\"{Name}\",\n\"type\":\"{Type}\",\n\"status\":\"{Event}\"\n}}";
+        }
     }
 
 

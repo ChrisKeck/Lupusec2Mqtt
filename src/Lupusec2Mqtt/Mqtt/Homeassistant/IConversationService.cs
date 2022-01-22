@@ -5,7 +5,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant
 {
     public interface IConversionService
     {
-        string GetStateByStatus(ILupusActor sensor, IList<Logrow> logrows);
+        string GetStateByStatus(ILupusActor actor, IList<Logrow> logrows);
         string GetDeviceClassDefaultValue(ILupusActor device);
     }
 }

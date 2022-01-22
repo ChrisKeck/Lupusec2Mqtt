@@ -1,12 +1,12 @@
 namespace Lupusec2Mqtt.Lupusec.Dtos
 {
-    public class PanelCondition : JsonRespresentable
+    public class PanelCondition
     {
         public Updates updates { get; set; }
         public Forms forms { get; set; }
     }
 
-    public class Updates : JsonRespresentable
+    public class Updates
     {
         public string mode_a1 { get; set; }
         public string mode_a2 { get; set; }
@@ -27,13 +27,13 @@ namespace Lupusec2Mqtt.Lupusec.Dtos
         public string sig_gsm { get; set; }
     }
 
-    public class Pcondform : JsonRespresentable
+    public class Pcondform
     {
         public AlarmMode mode { get; set; }
         public string f_arm { get; set; }
     }
 
-    public class Forms : JsonRespresentable
+    public class Forms
     {
         public Pcondform pcondform1 { get; set; }
         public Pcondform pcondform2 { get; set; }

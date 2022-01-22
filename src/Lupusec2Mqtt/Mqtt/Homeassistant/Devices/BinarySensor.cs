@@ -10,7 +10,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 {
     public class BinarySensor : Device, IStateProvider
     {
-        protected readonly Sensor _sensor;
+        protected readonly ILupusActor _sensor;
         private readonly IConversionService _conversationService;
         protected readonly IList<Logrow> _logRows;
 
@@ -30,14 +30,14 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
             return _conversationService.GetStateByStatus(_sensor, _logRows);
         }
 
-        public BinarySensor(IConfiguration configuration, Sensor sensor, IConversionService service, IList<Logrow> logRows = default)
+        public BinarySensor(IConfiguration configuration, ILupusActor sensor, IConversionService service, IList<Logrow> logRows = default)
             : base(configuration)
         {
             _conversationService = service;
             _sensor = sensor;
             _logRows = logRows ?? new List<Logrow>();
 
-            UniqueId = _sensor.SensorId;
+            UniqueId = _sensor.Id;
             Name = GetValue(nameof(Name), sensor.Name);
             DeviceClass = GetValue(nameof(DeviceClass), GetDeviceClassDefaultValue());
         }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Lupusec2Mqtt.Lupusec.Dtos
 {
-    public class PowerSwitch : JsonRespresentable, ILupusActor
+    public class PowerSwitch : ILupusActor
     {
         [JsonProperty("area")]
         public int Area { get; set; }
@@ -65,7 +65,13 @@ namespace Lupusec2Mqtt.Lupusec.Dtos
         [JsonProperty("status")]
         public string Status { get; set; }
 
-        int ILupusActor.TypeIdentifier => Type;
-        string ILupusActor.CurrentStatus => Status;
+        int ILupusActor.TypeId
+        {
+            get => Type;
+        }
+        public override string ToString()
+        {
+            return $"{{\n\"name\":\"{Name}\",\n\"type\":{Type},\n\"status\":\"{Status}\"\n}}";
+        }
     }
 }

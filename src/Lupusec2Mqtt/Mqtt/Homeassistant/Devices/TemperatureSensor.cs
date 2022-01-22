@@ -11,7 +11,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 {
     public class TemperatureSensor : Device, IStateProvider
     {
-        protected readonly Sensor _sensor;
+        protected readonly ILupusActor _sensor;
         protected readonly IList<Logrow> _logRows;
 
         [JsonProperty("device_class")]
@@ -36,13 +36,13 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
             return "0";
         }
 
-        public TemperatureSensor(IConfiguration configuration, Sensor sensor, IList<Logrow> logRows = default)
+        public TemperatureSensor(IConfiguration configuration, ILupusActor sensor, IList<Logrow> logRows = default)
         : base(configuration)
         {
             _sensor = sensor;
             _logRows = logRows??new List<Logrow>();
 
-            UniqueId = _sensor.SensorId + "TEMPERATURE";
+            UniqueId = _sensor.Id + "TEMPERATURE";
             Name = GetValue(nameof(Name), sensor.Name + " - Temperature");
             DeviceClass = GetValue(nameof(DeviceClass), GetDeviceClassDefaultValue());
         }

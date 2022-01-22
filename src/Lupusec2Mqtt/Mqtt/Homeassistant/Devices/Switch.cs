@@ -8,7 +8,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
 {
     public class Switch : Device, ISettable
     {
-        protected readonly PowerSwitch _powerSwitch;
+        protected readonly ILupusActor _powerSwitch;
 
         [JsonProperty("state_topic")]
         public string StateTopic => EscapeTopic($"homeassistant/{_component}/lupusec/{UniqueId}/state");
@@ -32,7 +32,7 @@ namespace Lupusec2Mqtt.Mqtt.Homeassistant.Devices
             lupusecService.SetSwitch(UniqueId, state.Equals("on", StringComparison.OrdinalIgnoreCase));
         }
 
-        public Switch(IConfiguration configuration, PowerSwitch powerSwitch)
+        public Switch(IConfiguration configuration, ILupusActor powerSwitch)
             : base(configuration)
         {
             _powerSwitch = powerSwitch;

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Lupusec2Mqtt.Lupusec.Dtos
 {
-    public class Sensor : ILupusActor, JsonRespresentable
+    public class Sensor : ILupusActor
     {
         [JsonProperty("alarm_status")]
         public string AlarmStatus;
@@ -22,7 +22,7 @@ namespace Lupusec2Mqtt.Lupusec.Dtos
         public string Bypassed;
 
         [JsonProperty("name")]
-        public string Name;
+        public string Name { get; set; }
 
         [JsonProperty("resp_mode")]
         public byte[] ResponseMode;
@@ -40,7 +40,7 @@ namespace Lupusec2Mqtt.Lupusec.Dtos
         public string StateText;
 
         [JsonProperty("status")]
-        public string Status;
+        public string Status { get; set; }
 
         [JsonProperty("status_ex")]
         public byte StatusEx;
@@ -62,7 +62,18 @@ namespace Lupusec2Mqtt.Lupusec.Dtos
 
         [JsonProperty("zone")]
         public byte Zone;
-        int ILupusActor.TypeIdentifier => Convert.ToInt32(TypeId);
-        string ILupusActor.CurrentStatus => Status;
+        int ILupusActor.TypeId
+        {
+            get => Convert.ToInt32(this.TypeId);
+        }
+        string ILupusActor.Id
+        {
+            get => this.SensorId;
+        }
+
+        public override string ToString()
+        {
+            return $"{{\n\"name\":\"{Name}\",\n\"type\":{TypeId},\n\"status\":\"{Status}\"\n}}";
+        }
     }
 }
